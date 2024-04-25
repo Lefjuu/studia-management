@@ -1,43 +1,41 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<User> _userManager;
-    private readonly IConfiguration _configuration;
+    private readonly AuthService _authService;
 
-    public AuthController(UserManager<User> userManager, IConfiguration configuration)
+    public AuthController(AuthService authService)
     {
-        _userManager = userManager;
-        _configuration = configuration;
+        _authService = authService;
     }
-        // POST: api/auth/register
+
+    // POST: api/auth/register
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
-        var userExists = await _userManager.FindByEmailAsync(model.Email);
-        if (userExists != null)
-            return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = "User already exists!" });
+        var (success, message) = await _authService.RegisterUserAsync(model);
+        if (!success)
+            return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = message });
 
-        User user = new User()
+        return Ok(new { Status = "Success", Message = message });
+    }
+
+    // POST: api/auth/login
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    {
+        var (authenticated, token, errorMessage) = await _authService.ValidateUserAsync(model);
+        if (authenticated)
         {
-            Email = model.Email,
-            SecurityStamp = Guid.NewGuid().ToString(),
-            Name = model.Name
-        };
-
-        var result = await _userManager.CreateAsync(user, model.Password);
-        if (!result.Succeeded)
-            return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "Error", Message = string.Join(", ", result.Errors.Select(x => x.Description)) });
-
-        return Ok(new { Status = "Success", Message = "User created successfully!" });
+            return Ok(new
+            {
+                token = token,
+                expiration = DateTime.Now.AddHours(3)  // Adjust according to your token lifetime settings
+            });
+        }
+        return Unauthorized(new { Status = "Error", Message = errorMessage });
     }
 }
