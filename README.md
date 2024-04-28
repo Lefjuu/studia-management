@@ -23,11 +23,8 @@ git clone https://github.com/Lefjuu/studia-management
 # Przejdź do katalogu projektu
 cd taskmanager
 
-# Uruchom skrypt instalacyjny
-./install.sh
-
 # Uruchom aplikację
-python taskmanager.py
+dotnet build
 ```
 ## Technologie
 
