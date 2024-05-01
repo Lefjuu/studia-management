@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -23,6 +24,7 @@ namespace MongoAuthenticatorAPI.Controllers
         }
 
         [HttpPost]
+        // [Authorize]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
@@ -44,7 +46,6 @@ namespace MongoAuthenticatorAPI.Controllers
                     Email = request.Email,
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
                     FullName = request.FullName,
-                    UserName = request.Email
 
                 };
                 var createUserResult = await _userManager.CreateAsync(newUser, request.Password);
@@ -121,7 +122,7 @@ namespace MongoAuthenticatorAPI.Controllers
                     Message = "Login Successful",
                     Email = user?.Email,
                     Success = true,
-                    UserId = user?.Email.ToString()
+                    Id = user?.Id.ToString()
                 };
             }
             catch (Exception ex)
@@ -132,6 +133,39 @@ namespace MongoAuthenticatorAPI.Controllers
 
 
         }
+        [HttpGet]
+        [Authorize]
+        [Route("me/{userId}")]
+        public async Task<IActionResult> GetMyProfile(string userId)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var profileResponse = new UserProfileResponse
+                {
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    Id = user.Id.ToString(),
+                    Message = "User profile retrieved successfully",
+                    Success = true
+                };
+
+                return Ok(profileResponse);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+
     }
 }
 
