@@ -24,7 +24,6 @@ namespace MongoAuthenticatorAPI.Controllers
         }
 
         [HttpPost]
-        // [Authorize]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
@@ -120,9 +119,9 @@ namespace MongoAuthenticatorAPI.Controllers
                 {
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                     Message = "Login Successful",
-                    Email = user?.Email,
+                    Email = user?.Email ?? "",
                     Success = true,
-                    Id = user?.Id.ToString()
+                    Id = user?.Id.ToString() ?? "",
                 };
             }
             catch (Exception ex)
@@ -149,7 +148,7 @@ namespace MongoAuthenticatorAPI.Controllers
 
                 var profileResponse = new UserProfileResponse
                 {
-                    Email = user.Email,
+                    Email = user.Email ?? "",
                     FullName = user.FullName,
                     Id = user.Id.ToString(),
                     Message = "User profile retrieved successfully",
