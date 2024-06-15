@@ -9,14 +9,14 @@ using MongoAuthenticatorAPI.Services;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String)); // General setting
-BsonSerializer.RegisterSerializer(new DateTimeSerializer(MongoDB.Bson.BsonType.String));
-BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeSerializer(BsonType.String));
+BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
 // Add MongoDB identity configuration
 var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
@@ -41,13 +41,15 @@ var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
 };
 
 builder.Services.ConfigureMongoDbIdentity<ApplicationUser, ApplicationRole, Guid>(mongoDbIdentityConfig)
+  
     .AddUserManager<UserManager<ApplicationUser>>()
+    .AddRoleManager<RoleManager<ApplicationRole>>() // Use ApplicationRole here
+    .AddSignInManager<SignInManager<ApplicationUser>>() // Add this line
     .AddDefaultTokenProviders();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddDefaultTokenProviders();
 
-// var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
 var jwtSecretKey = "486897e25269fb7777a0376bf91ffc4e5ec9e199f52daff5053659182e0c96342a204da9643914dc78d2e4020b0dca42286a0d3b9dd29a34bb897dc8c588a032";
 
 if (string.IsNullOrEmpty(jwtSecretKey))
@@ -88,7 +90,12 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>(); // Register the service
+// Register IMongoClient
+builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient("mongodb+srv://Lefju2115:Trabka1337@nodeexpressprojects.eb4td.mongodb.net/?retryWrites=true&w=majority"));
+
+// Register services
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
