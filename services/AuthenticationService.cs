@@ -2,13 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MongoAuthenticatorAPI.Dtos;
 using MongoAuthenticatorAPI.Models;
-using MongoDbGenericRepository;
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MongoAuthenticatorAPI.Services
 {

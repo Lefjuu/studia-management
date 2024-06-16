@@ -1,7 +1,5 @@
 using MongoAuthenticatorAPI.Dtos;
 using MongoAuthenticatorAPI.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MongoAuthenticatorAPI.Services
 {

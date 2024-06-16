@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoAuthenticatorAPI.Dtos;
-using MongoAuthenticatorAPI.Models;
 using MongoAuthenticatorAPI.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MongoAuthenticatorAPI.Controllers
 {

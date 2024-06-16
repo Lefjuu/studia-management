@@ -13,12 +13,10 @@ using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String)); // General setting
+BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeSerializer(BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
-// Add MongoDB identity configuration
 var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
 {
     MongoDbSettings = new MongoDbSettings
@@ -32,7 +30,6 @@ var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
         options.Password.RequireNonAlphanumeric = true;
         options.Password.RequireLowercase = false;
 
-        // Lockout
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
         options.Lockout.MaxFailedAccessAttempts = 5;
 
@@ -43,8 +40,8 @@ var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
 builder.Services.ConfigureMongoDbIdentity<ApplicationUser, ApplicationRole, Guid>(mongoDbIdentityConfig)
   
     .AddUserManager<UserManager<ApplicationUser>>()
-    .AddRoleManager<RoleManager<ApplicationRole>>() // Use ApplicationRole here
-    .AddSignInManager<SignInManager<ApplicationUser>>() // Add this line
+    .AddRoleManager<RoleManager<ApplicationRole>>()
+    .AddSignInManager<SignInManager<ApplicationUser>>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -90,10 +87,8 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Register IMongoClient
 builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient("mongodb+srv://Lefju2115:Trabka1337@nodeexpressprojects.eb4td.mongodb.net/?retryWrites=true&w=majority"));
 
-// Register services
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 
