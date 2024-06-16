@@ -10,5 +10,7 @@ namespace MongoAuthenticatorAPI.Services
         Task<UserProfileResponse> GetMyProfileAsync(string userId);
         Task<UpdateProfileResponse> UpdateProfileAsync(UpdateProfileRequest request, string userEmail);
         Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest request, string userId);
+        Task<IEnumerable<ApplicationUser>> GetUsersAsync();
+
     }
 }

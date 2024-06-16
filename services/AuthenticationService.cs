@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MongoAuthenticatorAPI.Dtos;
+using MongoAuthenticatorAPI.Models;
 using MongoDbGenericRepository;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,41 +15,58 @@ namespace MongoAuthenticatorAPI.Services
     public class AuthenticationService : IAuthenticationService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public AuthenticationService(UserManager<ApplicationUser> userManager)
+        public AuthenticationService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
+public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
+{
+    try
+    {
+        var userExists = await _userManager.FindByEmailAsync(request.Email);
+        if (userExists != null) return new RegisterResponse { Message = "User already exists", Success = false };
+
+        var newUser = new ApplicationUser
         {
-            try
-            {
-                var userExists = await _userManager.FindByEmailAsync(request.Email);
-                if (userExists != null) return new RegisterResponse { Message = "User already exists", Success = false };
+            UserName = request.FullName,
+            Email = request.Email,
+            ConcurrencyStamp = Guid.NewGuid().ToString(),
+            FullName = request.FullName,
+        };
 
-                var newUser = new ApplicationUser
-                {
-                    UserName = request.FullName,
-                    Email = request.Email,
-                    ConcurrencyStamp = Guid.NewGuid().ToString(),
-                    FullName = request.FullName,
-                    Role = "user"
-                };
-                var createUserResult = await _userManager.CreateAsync(newUser, request.Password);
-                if (!createUserResult.Succeeded) return new RegisterResponse { Message = $"Create user failed {createUserResult?.Errors?.First()?.Description}", Success = false };
+        var createUserResult = await _userManager.CreateAsync(newUser, request.Password);
+        if (!createUserResult.Succeeded) 
+            return new RegisterResponse { Message = $"Create user failed: {createUserResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
 
-                return new RegisterResponse
-                {
-                    Success = true,
-                    Message = "User registered successfully"
-                };
-            }
-            catch (Exception ex)
-            {
-                return new RegisterResponse { Message = ex.Message, Success = false };
-            }
+
+        var roleExists = await _roleManager.RoleExistsAsync("user");
+        if (!roleExists)
+        {
+            var createRoleResult = await _roleManager.CreateAsync(new ApplicationRole { Name = "user" });
+            if (!createRoleResult.Succeeded) 
+                return new RegisterResponse { Message = $"Create role failed: {createRoleResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
         }
+
+        var addToRoleResult = await _userManager.AddToRoleAsync(newUser, "user");
+        if (!addToRoleResult.Succeeded) 
+            return new RegisterResponse { Message = $"Add to role failed: {addToRoleResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
+
+        return new RegisterResponse
+        {
+            Success = true,
+            Message = "User registered successfully"
+        };
+    }
+    catch (Exception ex)
+    {
+        return new RegisterResponse { Message = ex.Message, Success = false };
+    }
+}
+
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
         {
@@ -86,10 +104,11 @@ namespace MongoAuthenticatorAPI.Services
                 return new LoginResponse
                 {
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-                    Message = "Login Successful",
+                    FullName = user?.FullName ?? "",
                     Email = user?.Email ?? "",
                     Success = true,
-                    Id = user?.Id.ToString() ?? ""
+                    Id = user?.Id.ToString() ?? "",
+                    Role = roles.FirstOrDefault() ?? ""
                 };
             }
             catch (Exception ex)
@@ -174,5 +193,10 @@ namespace MongoAuthenticatorAPI.Services
                 return new ChangePasswordResponse { Success = false, Message = "An error occurred while processing your request." };
             }
         }
+            public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
+        {
+            return await Task.FromResult(_userManager.Users.ToList());
+        }
     }
+
 }

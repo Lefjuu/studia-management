@@ -14,5 +14,5 @@ public class ApplicationUser : MongoIdentityUser<Guid>
     public bool IsConnected { get; set; } = false;
     public DateTime LastModified { get; set; } = DateTime.Now;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public string Role { get; set; } = "user";
+    public string Role { get; set; } = RoleEnum.User;
 }
