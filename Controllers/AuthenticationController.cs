@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoAuthenticatorAPI.Dtos;
 using MongoAuthenticatorAPI.Services;
@@ -13,6 +14,7 @@ namespace MongoAuthenticatorAPI.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
+
 
         public AuthenticationController(IAuthenticationService authenticationService)
         {
@@ -63,6 +65,15 @@ namespace MongoAuthenticatorAPI.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var result = await _authenticationService.ChangePasswordAsync(request, userId);
             return result.Success ? Ok(result) : BadRequest(result.Message);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("users")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _authenticationService.GetUsersAsync();
+            return Ok(users);
         }
     }
 }
