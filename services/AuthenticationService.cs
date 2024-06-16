@@ -2,13 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MongoAuthenticatorAPI.Dtos;
 using MongoAuthenticatorAPI.Models;
-using MongoDbGenericRepository;
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MongoAuthenticatorAPI.Services
 {
@@ -23,50 +19,48 @@ namespace MongoAuthenticatorAPI.Services
             _roleManager = roleManager;
         }
 
-public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
-{
-    try
-    {
-        var userExists = await _userManager.FindByEmailAsync(request.Email);
-        if (userExists != null) return new RegisterResponse { Message = "User already exists", Success = false };
-
-        var newUser = new ApplicationUser
+        public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
         {
-            UserName = request.FullName,
-            Email = request.Email,
-            ConcurrencyStamp = Guid.NewGuid().ToString(),
-            FullName = request.FullName,
-        };
+            try
+            {
+                var userExists = await _userManager.FindByEmailAsync(request.Email);
+                if (userExists != null) return new RegisterResponse { Message = "User already exists", Success = false };
 
-        var createUserResult = await _userManager.CreateAsync(newUser, request.Password);
-        if (!createUserResult.Succeeded) 
-            return new RegisterResponse { Message = $"Create user failed: {createUserResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
+                var newUser = new ApplicationUser
+                {
+                    UserName = request.FullName,
+                    Email = request.Email,
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                    FullName = request.FullName,
+                };
 
+                var createUserResult = await _userManager.CreateAsync(newUser, request.Password);
+                if (!createUserResult.Succeeded)
+                    return new RegisterResponse { Message = $"Create user failed: {createUserResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
 
-        var roleExists = await _roleManager.RoleExistsAsync("user");
-        if (!roleExists)
-        {
-            var createRoleResult = await _roleManager.CreateAsync(new ApplicationRole { Name = "user" });
-            if (!createRoleResult.Succeeded) 
-                return new RegisterResponse { Message = $"Create role failed: {createRoleResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
+                var roleExists = await _roleManager.RoleExistsAsync("user");
+                if (!roleExists)
+                {
+                    var createRoleResult = await _roleManager.CreateAsync(new ApplicationRole { Name = "user" });
+                    if (!createRoleResult.Succeeded)
+                        return new RegisterResponse { Message = $"Create role failed: {createRoleResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
+                }
+
+                var addToRoleResult = await _userManager.AddToRoleAsync(newUser, "user");
+                if (!addToRoleResult.Succeeded)
+                    return new RegisterResponse { Message = $"Add to role failed: {addToRoleResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
+
+                return new RegisterResponse
+                {
+                    Success = true,
+                    Message = "User registered successfully"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new RegisterResponse { Message = ex.Message, Success = false };
+            }
         }
-
-        var addToRoleResult = await _userManager.AddToRoleAsync(newUser, "user");
-        if (!addToRoleResult.Succeeded) 
-            return new RegisterResponse { Message = $"Add to role failed: {addToRoleResult?.Errors?.FirstOrDefault()?.Description}", Success = false };
-
-        return new RegisterResponse
-        {
-            Success = true,
-            Message = "User registered successfully"
-        };
-    }
-    catch (Exception ex)
-    {
-        return new RegisterResponse { Message = ex.Message, Success = false };
-    }
-}
-
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
         {
@@ -87,15 +81,14 @@ public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
                 var roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x));
                 claims.AddRange(roleClaims);
 
-                // var keyString = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
-                var keyString = "486897e25269fb7777a0376bf91ffc4e5ec9e199f52daff5053659182e0c96342a204da9643914dc78d2e4020b0dca42286a0d3b9dd29a34bb897dc8c588a032";
+                var keyString = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var expires = DateTime.Now.AddMinutes(30);
 
                 var token = new JwtSecurityToken(
-                    issuer: "https://localhost:5000",
-                    audience: "https://localhost:5000",
+                    issuer: Environment.GetEnvironmentVariable("JWT_ISSUER"),
+                    audience: Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
                     claims: claims,
                     expires: expires,
                     signingCredentials: creds
@@ -193,10 +186,10 @@ public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
                 return new ChangePasswordResponse { Success = false, Message = "An error occurred while processing your request." };
             }
         }
-            public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
             return await Task.FromResult(_userManager.Users.ToList());
         }
     }
-
 }

@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoAuthenticatorAPI.Dtos;
-using MongoAuthenticatorAPI.Models;
 using MongoAuthenticatorAPI.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MongoAuthenticatorAPI.Controllers
 {
@@ -13,10 +10,12 @@ namespace MongoAuthenticatorAPI.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService _projectService;
+        private readonly ITaskService _taskService;
 
-        public ProjectController(IProjectService projectService)
+        public ProjectController(IProjectService projectService, ITaskService taskService)
         {
             _projectService = projectService;
+            _taskService = taskService;
         }
 
         [HttpPost]
@@ -44,25 +43,6 @@ namespace MongoAuthenticatorAPI.Controllers
             return Ok(projects);
         }
 
-
-        [HttpPost("{projectId}/tasks")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> AddTaskToProject(string projectId, [FromBody] CreateTaskRequest request)
-        {
-            try
-            {
-                request.ProjectId = projectId;
-                var task = await _projectService.AddTaskToProjectAsync(request);
-                return Ok(task);
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-
-
-
         [HttpGet("users")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetUsers()
@@ -87,34 +67,6 @@ namespace MongoAuthenticatorAPI.Controllers
             var success = await _projectService.DeleteProjectAsync(id);
             if (!success) return NotFound();
             return NoContent();
-        }
-
-        [HttpPut("admin/{projectId}/tasks/{taskId}")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateTask(string projectId, string taskId, [FromBody] UpdateTaskRequest request)
-        {
-            var task = await _projectService.UpdateTaskAsync(projectId, taskId, request);
-            if (task == null) return NotFound();
-            return Ok(task);
-        }
-
-        [HttpDelete("admin/{projectId}/tasks/{taskId}")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteTask(string projectId, string taskId)
-        {
-            var success = await _projectService.DeleteTaskAsync(projectId, taskId);
-            if (!success) return NotFound();
-            return NoContent();
-        }
-
-
-        [HttpPut("{projectId}/tasks/{taskId}")]
-        [Authorize(Roles = "admin, user")]
-        public async Task<IActionResult> UpdateTaskDescriptionAndProgressAsync(string projectId, string taskId, [FromBody] UpdateTaskDescriptionAndProgressRequest request)
-        {
-            var task = await _projectService.UpdateTaskDescriptionAndProgressAsync(projectId, taskId, request);
-            if (task == null) return NotFound();
-            return Ok(task);
         }
     }
 }

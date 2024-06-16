@@ -10,20 +10,36 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String)); // General setting
+Env.Load();
+
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeSerializer(BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
-// Add MongoDB identity configuration
+var mongoDbConnectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING");
+var jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+
+if (string.IsNullOrEmpty(jwtSecretKey))
+{
+    throw new InvalidOperationException("JWT_SECRET_KEY environment variable is not set.");
+}
+
 var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
 {
     MongoDbSettings = new MongoDbSettings
     {
-        ConnectionString = "mongodb+srv://Lefju2115:Trabka1337@nodeexpressprojects.eb4td.mongodb.net/?retryWrites=true&w=majority",
+        ConnectionString = mongoDbConnectionString,
         DatabaseName = "company-management-10"
     },
     IdentityOptionsAction = options =>
@@ -32,7 +48,6 @@ var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
         options.Password.RequireNonAlphanumeric = true;
         options.Password.RequireLowercase = false;
 
-        // Lockout
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
         options.Lockout.MaxFailedAccessAttempts = 5;
 
@@ -41,21 +56,13 @@ var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
 };
 
 builder.Services.ConfigureMongoDbIdentity<ApplicationUser, ApplicationRole, Guid>(mongoDbIdentityConfig)
-  
     .AddUserManager<UserManager<ApplicationUser>>()
-    .AddRoleManager<RoleManager<ApplicationRole>>() // Use ApplicationRole here
-    .AddSignInManager<SignInManager<ApplicationUser>>() // Add this line
+    .AddRoleManager<RoleManager<ApplicationRole>>()
+    .AddSignInManager<SignInManager<ApplicationUser>>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddDefaultTokenProviders();
-
-var jwtSecretKey = "486897e25269fb7777a0376bf91ffc4e5ec9e199f52daff5053659182e0c96342a204da9643914dc78d2e4020b0dca42286a0d3b9dd29a34bb897dc8c588a032";
-
-if (string.IsNullOrEmpty(jwtSecretKey))
-{
-    throw new InvalidOperationException("JWT_SECRET_KEY environment variable is not set.");
-}
 
 builder.Services.AddAuthentication(x =>
 {
@@ -71,8 +78,8 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
-        ValidIssuer = "https://localhost:5000",
-        ValidAudience = "https://localhost:5000",
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)),
         ClockSkew = TimeSpan.Zero
     };
@@ -90,10 +97,8 @@ builder.Services.AddCors(options =>
         });
 });
 
-// Register IMongoClient
-builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient("mongodb+srv://Lefju2115:Trabka1337@nodeexpressprojects.eb4td.mongodb.net/?retryWrites=true&w=majority"));
+builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoDbConnectionString));
 
-// Register services
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 
@@ -101,12 +106,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    // app.UseSwagger();
-    // app.UseSwaggerUI();
-}
 
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();

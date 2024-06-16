@@ -1,5 +1,4 @@
 using MongoAuthenticatorAPI.Dtos;
-using System.Threading.Tasks;
 
 namespace MongoAuthenticatorAPI.Services
 {
