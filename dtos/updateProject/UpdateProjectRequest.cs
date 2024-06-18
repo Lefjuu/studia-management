@@ -1,5 +1,6 @@
-public class UpdateProjectRequest
+namespace MongoAuthenticatorAPI.Dtos
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
+    public class UpdateProjectRequest : ProjectBaseRequest
+    {
+    }
 }
