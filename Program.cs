@@ -101,6 +101,7 @@ builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoDbConnect
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
