@@ -3,6 +3,7 @@ using MongoAuthenticatorAPI.Models;
 using MongoAuthenticatorAPI.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace MongoAuthenticatorAPI.Services
 {
@@ -18,15 +19,26 @@ namespace MongoAuthenticatorAPI.Services
       _userManager = userManager;
     }
 
-    public async Task<Project> GetProjectByIdAsync(string projectId)
+    public async Task<ServiceResponse<Project>> GetProjectByIdAsync(string projectId)
     {
-      return await _projects.Find(p => p.Id == projectId).FirstOrDefaultAsync();
+      var project = await _projects.Find(p => p.Id == projectId).FirstOrDefaultAsync();
+      if (project == null)
+      {
+        return new ServiceResponse<Project>
+        {
+          Success = false,
+          Message = "Project not found"
+        };
+      }
+      return new ServiceResponse<Project> { Data = project };
     }
 
-    public async Task<TaskItem> AddTaskToProjectAsync(CreateTaskRequest request)
+    public async Task<ServiceResponse<TaskItem>> AddTaskToProjectAsync(CreateTaskRequest request)
     {
-      var project = await GetProjectByIdAsync(request.ProjectId);
-      if (project == null) throw new Exception("Project not found");
+      var projectResponse = await GetProjectByIdAsync(request.ProjectId);
+      if (!projectResponse.Success) return new ServiceResponse<TaskItem> { Success = false, Message = projectResponse.Message };
+
+      var project = projectResponse.Data;
 
       var newTask = new TaskItem
       {
@@ -41,16 +53,20 @@ namespace MongoAuthenticatorAPI.Services
       project.Tasks.Add(newTask);
       await _projects.ReplaceOneAsync(p => p.Id == request.ProjectId, project);
 
-      return newTask;
+      return new ServiceResponse<TaskItem> { Data = newTask };
     }
 
-    public async Task<TaskItem> UpdateTaskAsync(string projectId, string taskId, UpdateTaskRequest request)
+    public async Task<ServiceResponse<TaskItem>> UpdateTaskAsync(string projectId, string taskId, UpdateTaskRequest request)
     {
-      var project = await _projects.Find(p => p.Id == projectId).FirstOrDefaultAsync();
-      if (project == null) return null;
+      var projectResponse = await GetProjectByIdAsync(projectId);
+      if (!projectResponse.Success) return new ServiceResponse<TaskItem> { Success = false, Message = projectResponse.Message };
 
+      var project = projectResponse.Data;
       var task = project.Tasks.FirstOrDefault(t => t.Id == taskId);
-      if (task == null) return null;
+      if (task == null)
+      {
+        return new ServiceResponse<TaskItem> { Success = false, Message = "Task not found" };
+      }
 
       task.Title = request.Title;
       task.Description = request.Description;
@@ -58,36 +74,43 @@ namespace MongoAuthenticatorAPI.Services
       task.UserId = request.UserId;
       task.Progress = request.Progress;
 
-
       await _projects.ReplaceOneAsync(p => p.Id == projectId, project);
-      return task;
+      return new ServiceResponse<TaskItem> { Data = task };
     }
 
-    public async Task<bool> DeleteTaskAsync(string projectId, string taskId)
+    public async Task<ServiceResponse<bool>> DeleteTaskAsync(string projectId, string taskId)
     {
-      var project = await _projects.Find(p => p.Id == projectId).FirstOrDefaultAsync();
-      if (project == null) return false;
+      var projectResponse = await GetProjectByIdAsync(projectId);
+      if (!projectResponse.Success) return new ServiceResponse<bool> { Success = false, Message = projectResponse.Message };
 
+      var project = projectResponse.Data;
       var task = project.Tasks.FirstOrDefault(t => t.Id == taskId);
-      if (task == null) return false;
-
-      project.Tasks.Remove(task);
-
-      await _projects.ReplaceOneAsync(p => p.Id == projectId, project);
-      return true;
-    }
-    public async Task<TaskItem> UpdateTaskDescriptionAndProgressAsync(string projectId, string taskId, UpdateTaskDescriptionAndProgressRequest request)
-    {
-      var project = await GetProjectByIdAsync(projectId);
-      if (project == null)
+      if (task == null)
       {
-        return null;
+        return new ServiceResponse<bool> { Success = false, Message = "Task not found" };
       }
 
+      project.Tasks.Remove(task);
+      await _projects.ReplaceOneAsync(p => p.Id == projectId, project);
+      return new ServiceResponse<bool> { Data = true };
+    }
+
+    public async Task<ServiceResponse<TaskItem>> UpdateTaskDescriptionAndProgressAsync(string projectId, string taskId, UpdateTaskDescriptionAndProgressRequest request, string userEmail)
+    {
+      var projectResponse = await GetProjectByIdAsync(projectId);
+      var user = await _userManager.FindByEmailAsync(userEmail);
+      if (!projectResponse.Success) return new ServiceResponse<TaskItem> { Success = false, Message = projectResponse.Message };
+
+      var project = projectResponse.Data;
       var task = project.Tasks.Find(t => t.Id == taskId);
       if (task == null)
       {
-        return null;
+        return new ServiceResponse<TaskItem> { Success = false, Message = "Task not found" };
+      }
+
+      if (task.UserId != user.Id.ToString() && !user.Roles.Contains(Guid.Parse("d4b3b3f0-7f3b-4b6d-8b1b-3e1f0f3f3f3f")))
+      {
+        return new ServiceResponse<TaskItem> { Success = false, Message = "You are not allowed to update this task." };
       }
 
       task.Description = request.Description;
@@ -96,8 +119,7 @@ namespace MongoAuthenticatorAPI.Services
       var update = Builders<Project>.Update.Set(p => p.Tasks, project.Tasks);
       await _projects.UpdateOneAsync(p => p.Id == projectId, update);
 
-      return task;
+      return new ServiceResponse<TaskItem> { Data = task };
     }
-
   }
 }
