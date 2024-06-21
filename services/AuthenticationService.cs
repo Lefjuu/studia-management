@@ -163,11 +163,11 @@ namespace MongoAuthenticatorAPI.Services
             }
         }
 
-        public async Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest request, string userId)
+        public async Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest request, string userEmail)
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(userId);
+                var user = await _userManager.FindByEmailAsync(userEmail);
 
                 if (user == null)
                 {
