@@ -1,7 +1,3 @@
-Oczywiście, oto zaktualizowane README z usunięciem wzmianki o hermetyzacji, polimorfizmie i dziedziczeniu, a większym naciskiem na możliwości aplikacji:
-
----
-
 # Taskmanager
 
 ## Opis
@@ -103,11 +99,3 @@ Odpowiada za zarządzanie zadaniami w projektach. Umożliwia tworzenie, aktualiz
 ## Contributing
 
 Zapraszamy do współpracy! Jeśli masz pomysły, uwagi lub chciałbyś dodać nowe funkcje, otwórz zgłoszenie lub wyślij pull request.
-
-## Licencja
-
-Ten projekt jest licencjonowany na warunkach licencji MIT. Szczegóły znajdziesz w pliku LICENSE.
-
----
-
-Ten README zawiera szczegółowe informacje o możliwościach aplikacji, technologiach używanych w projekcie oraz zastosowanych koncepcjach programowania obiektowego, co powinno pomóc programistom zrozumieć strukturę i logikę aplikacji.
