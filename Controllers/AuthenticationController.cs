@@ -60,8 +60,9 @@ namespace MongoAuthenticatorAPI.Controllers
         [Route("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var result = await _authenticationService.ChangePasswordAsync(request, userId);
+            var userEmail = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+   
+            var result = await _authenticationService.ChangePasswordAsync(request, userEmail);
             return result.Success ? Ok(result) : BadRequest(result.Message);
         }
 
