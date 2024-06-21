@@ -68,5 +68,22 @@ namespace MongoAuthenticatorAPI.Controllers
             if (!success) return NotFound();
             return NoContent();
         }
+
+
+        [HttpPost("{projectId}/tasks")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AddTaskToProject(string projectId, [FromBody] CreateTaskRequest request)
+        {
+            try
+            {
+                request.ProjectId = projectId;
+                var task = await _taskService.AddTaskToProjectAsync(request);
+                return Ok(task);
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
