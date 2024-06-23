@@ -110,7 +110,7 @@ builder.Services.AddEndpointsApiExplorer();
 // Add Swagger configuration
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MongoAuthenticatorAPI", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Task Manager API", Version = "v1" });
 
     var securityScheme = new OpenApiSecurityScheme
     {
@@ -142,7 +142,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MongoAuthenticatorAPI v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Manager API v1");
     c.RoutePrefix = string.Empty;
 });
 
