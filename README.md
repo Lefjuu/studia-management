@@ -26,11 +26,6 @@ Taskmanager to zaawansowany system do zarządzania zadaniami, który umożliwia 
 
 - **Usuwanie zadań**: Użytkownicy mogą usuwać zadania, które są już nieaktualne lub zakończone, co pomaga w utrzymaniu porządku w projektach.
 
-### Planowanie pracy
-
-- **Współpraca**: System umożliwia dodawanie nowych pomysłów i dzielenie się nimi z innymi użytkownikami, co wspiera wspólną organizację i planowanie projektów.
-- **Harmonogramy i przypomnienia**: Użytkownicy mogą tworzyć harmonogramy zadań oraz ustawiać przypomnienia, co pomaga w terminowym wykonywaniu obowiązków.
-
 ### Zarządzanie projektami
 
 - **Tworzenie projektów**: Admini mogą tworzyć nowe projekty i przypisywać do nich zadania.
