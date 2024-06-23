@@ -1,0 +1,12 @@
+@startuml
+class RoleAuthorizeAttribute {
+    + RoleAuthorizeAttribute(role:string)
+}
+class RoleAuthorizeFilter {
+    - <<readonly>> _role : string
+    + RoleAuthorizeFilter(role:string)
+    + OnAuthorization(context:AuthorizationFilterContext) : void
+}
+TypeFilterAttribute <|-- RoleAuthorizeAttribute
+IAuthorizationFilter <|-- RoleAuthorizeFilter
+@enduml

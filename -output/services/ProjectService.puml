@@ -1,0 +1,18 @@
+@startuml
+class ProjectService {
+    + ProjectService(client:IMongoClient, userManager:UserManager<ApplicationUser>)
+    + <<async>> CreateProjectAsync(request:CreateProjectRequest) : Task<Project>
+    + <<async>> GetProjectByIdAsync(projectId:string) : Task<Project>
+    + <<async>> GetAllProjectsAsync() : Task<IEnumerable<Project>>
+    + <<async>> GetUsersAsync() : Task<IEnumerable<ApplicationUser>>
+    + <<async>> UpdateProjectAsync(id:string, request:UpdateProjectRequest) : Task<Project>
+    + <<async>> DeleteProjectAsync(id:string) : Task<bool>
+}
+class "IMongoCollection`1"<T> {
+}
+class "UserManager`1"<T> {
+}
+IProjectService <|-- ProjectService
+ProjectService --> "_projects<Project>" "IMongoCollection`1"
+ProjectService --> "_userManager<ApplicationUser>" "UserManager`1"
+@enduml

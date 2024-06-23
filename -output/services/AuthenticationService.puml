@@ -1,0 +1,18 @@
+@startuml
+class AuthenticationService {
+    + AuthenticationService(userManager:UserManager<ApplicationUser>, roleManager:RoleManager<ApplicationRole>)
+    + <<async>> RegisterAsync(request:RegisterRequest) : Task<RegisterResponse>
+    + <<async>> LoginAsync(request:LoginRequest) : Task<LoginResponse>
+    + <<async>> GetMyProfileAsync(userId:string) : Task<UserProfileResponse>
+    + <<async>> UpdateProfileAsync(request:UpdateProfileRequest, userEmail:string) : Task<UpdateProfileResponse>
+    + <<async>> ChangePasswordAsync(request:ChangePasswordRequest, userEmail:string) : Task<ChangePasswordResponse>
+    + <<async>> GetUsersAsync() : Task<IEnumerable<ApplicationUser>>
+}
+class "UserManager`1"<T> {
+}
+class "RoleManager`1"<T> {
+}
+IAuthenticationService <|-- AuthenticationService
+AuthenticationService --> "_userManager<ApplicationUser>" "UserManager`1"
+AuthenticationService --> "_roleManager<ApplicationRole>" "RoleManager`1"
+@enduml

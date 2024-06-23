@@ -1,0 +1,6 @@
+@startuml
+class ProjectBaseRequest {
+    + Name : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+}
+@enduml

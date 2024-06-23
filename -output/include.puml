@@ -1,0 +1,271 @@
+@startuml
+class "ConfigureMongoDbIdentity`3"<T1,T2,T3> {
+}
+class "AddUserManager`1"<T> {
+}
+class "AddRoleManager`1"<T> {
+}
+class "AddSignInManager`1"<T> {
+}
+class "AddIdentity`2"<T1,T2> {
+}
+class "AddSingleton`1"<T> {
+}
+class "AddScoped`2"<T1,T2> {
+}
+class MongoDbConfig {
+    + DatabaseName : string <<get>> <<init>>
+    + ConnectionString : string <<get>> <<init>>
+}
+class MongoDBKeyGenerator {
+    + {static} GenerateMongoDBKey() : string
+}
+class GenerateKey {
+    + {static} GenerateSecureKey() : string
+}
+class TaskItem {
+    + Id : string <<get>> <<set>>
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + Priority : int <<get>> <<set>>
+    + ProjectId : string <<get>> <<set>>
+    + UserId : string <<get>> <<set>>
+    + Progress : int <<get>> <<set>>
+}
+TaskItem --> "UpdatedAt" DateTime
+class ErrorViewModel {
+    + RequestId : string? <<get>> <<set>>
+    + ShowRequestId : bool <<get>>
+}
+class ApplicationRole {
+}
+class "MongoIdentityRole`1"<T> {
+}
+"MongoIdentityRole`1" "<Guid>" <|-- ApplicationRole
+class Project {
+    + Id : string <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+}
+class "List`1"<T> {
+}
+Project o-> "Tasks<TaskItem>" "List`1"
+class RoleEnum {
+    + <<const>> User : string = "user"
+    + <<const>> Admin : string = "admin"
+}
+class ApplicationUser {
+    + FullName : string <<get>> <<set>>
+    + IsConnected : bool <<get>> <<set>> = false
+    + Role : string <<get>> <<set>>
+}
+class "MongoIdentityUser`1"<T> {
+}
+"MongoIdentityUser`1" "<Guid>" <|-- ApplicationUser
+ApplicationUser o-> "LastModified" DateTime
+ApplicationUser o-> "CreatedAt" DateTime
+class "ServiceResponse`1"<T> {
+    + Data : T <<get>> <<set>>
+    + Success : bool <<get>> <<set>> = true
+    + Message : string <<get>> <<set>> = null
+}
+class AuthenticationController {
+    + AuthenticationController(authenticationService:IAuthenticationService)
+    + <<async>> Register(request:RegisterRequest) : Task<IActionResult>
+    + <<async>> Login(request:LoginRequest) : Task<IActionResult>
+    + <<async>> GetMyProfile(userId:string) : Task<IActionResult>
+    + <<async>> UpdateProfile(request:UpdateProfileRequest) : Task<IActionResult>
+    + <<async>> ChangePassword(request:ChangePasswordRequest) : Task<IActionResult>
+    + <<async>> GetUsers() : Task<IActionResult>
+}
+ControllerBase <|-- AuthenticationController
+AuthenticationController --> "_authenticationService" IAuthenticationService
+class RoleAuthorizeAttribute {
+    + RoleAuthorizeAttribute(role:string)
+}
+class RoleAuthorizeFilter {
+    - <<readonly>> _role : string
+    + RoleAuthorizeFilter(role:string)
+    + OnAuthorization(context:AuthorizationFilterContext) : void
+}
+TypeFilterAttribute <|-- RoleAuthorizeAttribute
+IAuthorizationFilter <|-- RoleAuthorizeFilter
+class TaskController {
+    + TaskController(projectService:IProjectService, taskService:ITaskService)
+    + <<async>> UpdateTask(projectId:string, taskId:string, request:UpdateTaskRequest) : Task<IActionResult>
+    + <<async>> DeleteTask(projectId:string, taskId:string) : Task<IActionResult>
+    + <<async>> UpdateTaskDescriptionAndProgressAsync(projectId:string, taskId:string, request:UpdateTaskDescriptionAndProgressRequest) : Task<IActionResult>
+}
+ControllerBase <|-- TaskController
+TaskController --> "_projectService" IProjectService
+TaskController --> "_taskService" ITaskService
+class ProjectController {
+    + ProjectController(projectService:IProjectService, taskService:ITaskService)
+    + <<async>> CreateProject(request:CreateProjectRequest) : Task<IActionResult>
+    + <<async>> GetProjectById(id:string) : Task<IActionResult>
+    + <<async>> GetAllProjects() : Task<IActionResult>
+    + <<async>> GetUsers() : Task<IActionResult>
+    + <<async>> UpdateProject(id:string, request:UpdateProjectRequest) : Task<IActionResult>
+    + <<async>> DeleteProject(id:string) : Task<IActionResult>
+    + <<async>> AddTaskToProject(projectId:string, request:CreateTaskRequest) : Task<IActionResult>
+}
+ControllerBase <|-- ProjectController
+ProjectController --> "_projectService" IProjectService
+ProjectController --> "_taskService" ITaskService
+interface ITaskService {
+    AddTaskToProjectAsync(request:CreateTaskRequest) : Task<ServiceResponse<TaskItem>>
+    UpdateTaskAsync(projectId:string, taskId:string, request:UpdateTaskRequest) : Task<ServiceResponse<TaskItem>>
+    DeleteTaskAsync(projectId:string, taskId:string) : Task<ServiceResponse<bool>>
+    UpdateTaskDescriptionAndProgressAsync(projectId:string, taskId:string, request:UpdateTaskDescriptionAndProgressRequest, userEmail:string) : Task<ServiceResponse<TaskItem>>
+}
+interface IProjectService {
+    CreateProjectAsync(request:CreateProjectRequest) : Task<Project>
+    GetProjectByIdAsync(projectId:string) : Task<Project>
+    GetAllProjectsAsync() : Task<IEnumerable<Project>>
+    GetUsersAsync() : Task<IEnumerable<ApplicationUser>>
+    UpdateProjectAsync(id:string, request:UpdateProjectRequest) : Task<Project>
+    DeleteProjectAsync(id:string) : Task<bool>
+}
+class AuthenticationService {
+    + AuthenticationService(userManager:UserManager<ApplicationUser>, roleManager:RoleManager<ApplicationRole>)
+    + <<async>> RegisterAsync(request:RegisterRequest) : Task<RegisterResponse>
+    + <<async>> LoginAsync(request:LoginRequest) : Task<LoginResponse>
+    + <<async>> GetMyProfileAsync(userId:string) : Task<UserProfileResponse>
+    + <<async>> UpdateProfileAsync(request:UpdateProfileRequest, userEmail:string) : Task<UpdateProfileResponse>
+    + <<async>> ChangePasswordAsync(request:ChangePasswordRequest, userEmail:string) : Task<ChangePasswordResponse>
+    + <<async>> GetUsersAsync() : Task<IEnumerable<ApplicationUser>>
+}
+class "UserManager`1"<T> {
+}
+class "RoleManager`1"<T> {
+}
+IAuthenticationService <|-- AuthenticationService
+AuthenticationService --> "_userManager<ApplicationUser>" "UserManager`1"
+AuthenticationService --> "_roleManager<ApplicationRole>" "RoleManager`1"
+class TaskService {
+    + TaskService(client:IMongoClient, userManager:UserManager<ApplicationUser>)
+    + <<async>> GetProjectByIdAsync(projectId:string) : Task<ServiceResponse<Project>>
+    + <<async>> AddTaskToProjectAsync(request:CreateTaskRequest) : Task<ServiceResponse<TaskItem>>
+    + <<async>> UpdateTaskAsync(projectId:string, taskId:string, request:UpdateTaskRequest) : Task<ServiceResponse<TaskItem>>
+    + <<async>> DeleteTaskAsync(projectId:string, taskId:string) : Task<ServiceResponse<bool>>
+    + <<async>> UpdateTaskDescriptionAndProgressAsync(projectId:string, taskId:string, request:UpdateTaskDescriptionAndProgressRequest, userEmail:string) : Task<ServiceResponse<TaskItem>>
+}
+class "IMongoCollection`1"<T> {
+}
+class "UserManager`1"<T> {
+}
+ITaskService <|-- TaskService
+TaskService --> "_projects<Project>" "IMongoCollection`1"
+TaskService --> "_userManager<ApplicationUser>" "UserManager`1"
+class ProjectService {
+    + ProjectService(client:IMongoClient, userManager:UserManager<ApplicationUser>)
+    + <<async>> CreateProjectAsync(request:CreateProjectRequest) : Task<Project>
+    + <<async>> GetProjectByIdAsync(projectId:string) : Task<Project>
+    + <<async>> GetAllProjectsAsync() : Task<IEnumerable<Project>>
+    + <<async>> GetUsersAsync() : Task<IEnumerable<ApplicationUser>>
+    + <<async>> UpdateProjectAsync(id:string, request:UpdateProjectRequest) : Task<Project>
+    + <<async>> DeleteProjectAsync(id:string) : Task<bool>
+}
+class "IMongoCollection`1"<T> {
+}
+class "UserManager`1"<T> {
+}
+IProjectService <|-- ProjectService
+ProjectService --> "_projects<Project>" "IMongoCollection`1"
+ProjectService --> "_userManager<ApplicationUser>" "UserManager`1"
+interface IAuthenticationService {
+    RegisterAsync(request:RegisterRequest) : Task<RegisterResponse>
+    LoginAsync(request:LoginRequest) : Task<LoginResponse>
+    GetMyProfileAsync(userId:string) : Task<UserProfileResponse>
+    UpdateProfileAsync(request:UpdateProfileRequest, userEmail:string) : Task<UpdateProfileResponse>
+    ChangePasswordAsync(request:ChangePasswordRequest, userId:string) : Task<ChangePasswordResponse>
+    GetUsersAsync() : Task<IEnumerable<ApplicationUser>>
+}
+class CreateRoleRequest {
+    + Role : string <<get>> <<set>>
+}
+class ProjectBaseRequest {
+    + Name : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+}
+class UserProfileResponse {
+    + Id : string <<get>> <<set>>
+    + Email : string <<get>> <<set>>
+    + FullName : string <<get>> <<set>>
+    + Message : string <<get>> <<set>>
+    + Success : bool <<get>> <<set>>
+}
+class CreateTaskRequest {
+}
+TaskBaseRequest <|-- CreateTaskRequest
+class RegisterResponse {
+    + Message : string <<get>> <<set>>
+    + Success : bool <<get>> <<set>>
+}
+class RegisterRequest {
+    + Email : string <<get>> <<set>>
+    + FullName : string <<get>> <<set>>
+    + Password : string <<get>> <<set>>
+    + ConfirmPassword : string <<get>> <<set>>
+}
+class ChangePasswordRequest {
+    + CurrentPassword : string <<get>> <<set>>
+    + NewPassword : string <<get>> <<set>>
+}
+class ChangePasswordResponse {
+    + Id : string <<get>> <<set>>
+    + Success : bool <<get>> <<set>>
+    + Message : string <<get>> <<set>>
+    + FullName : string <<get>> <<set>>
+    + Errors : object <<get>> <<set>>
+}
+class TaskBaseRequest {
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + Priority : int <<get>> <<set>>
+    + ProjectId : string <<get>> <<set>>
+    + UserId : string <<get>> <<set>>
+}
+class UpdateTaskDescriptionAndProgressResponse {
+    + Description : string <<get>> <<set>>
+    + Progress : int <<get>> <<set>>
+    + Message : string <<get>> <<set>>
+}
+class UpdateTaskRequest {
+    + Progress : int <<get>> <<set>>
+}
+TaskBaseRequest <|-- UpdateTaskRequest
+class UpdateTaskDescriptionAndProgressRequest {
+    + Description : string <<get>> <<set>>
+    + Progress : int <<get>> <<set>>
+}
+class CreateProjectRequest {
+}
+ProjectBaseRequest <|-- CreateProjectRequest
+class UpdateProfileRequest {
+    + FullName : string <<get>> <<set>>
+}
+class UpdateProfileResponse {
+    + Id : string <<get>> <<set>>
+    + Success : bool <<get>> <<set>>
+    + Message : string <<get>> <<set>>
+    + FullName : string <<get>> <<set>>
+    + Errors : object <<get>> <<set>>
+}
+class LoginResponse {
+    + Success : bool <<get>> <<set>>
+    + FullName : string <<get>> <<set>>
+    + AccessToken : string <<get>> <<set>>
+    + Email : string <<get>> <<set>>
+    + Id : string <<get>> <<set>>
+    + Message : string <<get>> <<set>>
+    + Role : string <<get>> <<set>>
+}
+class LoginRequest {
+    + Email : string <<get>> <<set>>
+    + Password : string <<get>> <<set>>
+}
+class UpdateProjectRequest {
+}
+ProjectBaseRequest <|-- UpdateProjectRequest
+@enduml

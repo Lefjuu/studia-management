@@ -1,0 +1,16 @@
+@startuml
+class RoleEnum {
+    + <<const>> User : string = "user"
+    + <<const>> Admin : string = "admin"
+}
+class ApplicationUser {
+    + FullName : string <<get>> <<set>>
+    + IsConnected : bool <<get>> <<set>> = false
+    + Role : string <<get>> <<set>>
+}
+class "MongoIdentityUser`1"<T> {
+}
+"MongoIdentityUser`1" "<Guid>" <|-- ApplicationUser
+ApplicationUser o-> "LastModified" DateTime
+ApplicationUser o-> "CreatedAt" DateTime
+@enduml

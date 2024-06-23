@@ -1,0 +1,5 @@
+@startuml
+class CreateRoleRequest {
+    + Role : string <<get>> <<set>>
+}
+@enduml

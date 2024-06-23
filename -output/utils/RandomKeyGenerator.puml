@@ -1,0 +1,5 @@
+@startuml
+class MongoDBKeyGenerator {
+    + {static} GenerateMongoDBKey() : string
+}
+@enduml

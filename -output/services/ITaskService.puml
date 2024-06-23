@@ -1,0 +1,8 @@
+@startuml
+interface ITaskService {
+    AddTaskToProjectAsync(request:CreateTaskRequest) : Task<ServiceResponse<TaskItem>>
+    UpdateTaskAsync(projectId:string, taskId:string, request:UpdateTaskRequest) : Task<ServiceResponse<TaskItem>>
+    DeleteTaskAsync(projectId:string, taskId:string) : Task<ServiceResponse<bool>>
+    UpdateTaskDescriptionAndProgressAsync(projectId:string, taskId:string, request:UpdateTaskDescriptionAndProgressRequest, userEmail:string) : Task<ServiceResponse<TaskItem>>
+}
+@enduml

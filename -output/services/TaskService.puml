@@ -1,0 +1,17 @@
+@startuml
+class TaskService {
+    + TaskService(client:IMongoClient, userManager:UserManager<ApplicationUser>)
+    + <<async>> GetProjectByIdAsync(projectId:string) : Task<ServiceResponse<Project>>
+    + <<async>> AddTaskToProjectAsync(request:CreateTaskRequest) : Task<ServiceResponse<TaskItem>>
+    + <<async>> UpdateTaskAsync(projectId:string, taskId:string, request:UpdateTaskRequest) : Task<ServiceResponse<TaskItem>>
+    + <<async>> DeleteTaskAsync(projectId:string, taskId:string) : Task<ServiceResponse<bool>>
+    + <<async>> UpdateTaskDescriptionAndProgressAsync(projectId:string, taskId:string, request:UpdateTaskDescriptionAndProgressRequest, userEmail:string) : Task<ServiceResponse<TaskItem>>
+}
+class "IMongoCollection`1"<T> {
+}
+class "UserManager`1"<T> {
+}
+ITaskService <|-- TaskService
+TaskService --> "_projects<Project>" "IMongoCollection`1"
+TaskService --> "_userManager<ApplicationUser>" "UserManager`1"
+@enduml

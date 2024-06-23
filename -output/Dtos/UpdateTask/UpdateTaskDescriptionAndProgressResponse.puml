@@ -1,0 +1,7 @@
+@startuml
+class UpdateTaskDescriptionAndProgressResponse {
+    + Description : string <<get>> <<set>>
+    + Progress : int <<get>> <<set>>
+    + Message : string <<get>> <<set>>
+}
+@enduml

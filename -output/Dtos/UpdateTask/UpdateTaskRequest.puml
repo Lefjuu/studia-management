@@ -1,0 +1,6 @@
+@startuml
+class UpdateTaskRequest {
+    + Progress : int <<get>> <<set>>
+}
+TaskBaseRequest <|-- UpdateTaskRequest
+@enduml

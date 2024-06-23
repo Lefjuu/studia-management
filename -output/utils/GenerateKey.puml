@@ -1,0 +1,5 @@
+@startuml
+class GenerateKey {
+    + {static} GenerateSecureKey() : string
+}
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+class TaskController {
+    + TaskController(projectService:IProjectService, taskService:ITaskService)
+    + <<async>> UpdateTask(projectId:string, taskId:string, request:UpdateTaskRequest) : Task<IActionResult>
+    + <<async>> DeleteTask(projectId:string, taskId:string) : Task<IActionResult>
+    + <<async>> UpdateTaskDescriptionAndProgressAsync(projectId:string, taskId:string, request:UpdateTaskDescriptionAndProgressRequest) : Task<IActionResult>
+}
+ControllerBase <|-- TaskController
+TaskController --> "_projectService" IProjectService
+TaskController --> "_taskService" ITaskService
+@enduml

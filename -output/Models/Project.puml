@@ -1,0 +1,10 @@
+@startuml
+class Project {
+    + Id : string <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+}
+class "List`1"<T> {
+}
+Project o-> "Tasks<TaskItem>" "List`1"
+@enduml
