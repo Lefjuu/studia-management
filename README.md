@@ -33,7 +33,7 @@ Taskmanager to zaawansowany system do zarządzania zadaniami, który umożliwia 
 
 ### Zarządzanie projektami
 
-- **Tworzenie projektów**: Użytkownicy mogą tworzyć nowe projekty i przypisywać do nich zadania.
+- **Tworzenie projektów**: Admini mogą tworzyć nowe projekty i przypisywać do nich zadania.
 
 ![add-project](readme/images/add-project.png)
 
@@ -50,6 +50,39 @@ Taskmanager to zaawansowany system do zarządzania zadaniami, który umożliwia 
 ![profile](readme/images/profile.png)
 
 - **Role i uprawnienia**: System zarządza rolami użytkowników (admin, user) i przydziela odpowiednie uprawnienia, co zapewnia kontrolę dostępu do zasobów.
+
+![register](readme/images/register.png)
+
+### Widok Administratora
+
+- **Dodawanie projektów**: Administratorzy mają możliwość dodawania nowych projektów.
+
+![add-project](readme/images/add-project.png)
+
+- **Edytowanie projektów**: Administratorzy mogą edytować szczegóły projektów.
+
+![edit-project-admin](readme/images/edit-project-admin.png)
+
+- **Przypisywanie zadań do projektów**: Administratorzy mogą przypisywać zadania do projektów.
+
+![project-admin](readme/images/project-admin.png)
+
+### Widok Użytkownika
+
+- **Edytowanie zadań**: Użytkownicy mogą edytować opis i postęp zadań, które zostały im przypisane.
+
+![edit-task-user](readme/images/edit-task-user.png)
+
+- **Podgląd projektów**: Użytkownicy mogą przeglądać projekty i zadania, które zostały im przypisane.
+
+![project-user](readme/images/project-user.png)
+
+### Diagram Aplikacji Taskmanager
+
+Poniżej znajduje się diagram przedstawiający strukturę i interfejs aplikacji Taskmanager. Diagram ten ilustruje główne komponenty systemu oraz interakcje między nimi, co pomaga w zrozumieniu przepływu pracy i funkcjonalności aplikacji.
+
+![diagram](out/-output/include/include.svg)
+
 
 ## Instalacja
 
@@ -127,4 +160,4 @@ Odpowiada za zarządzanie zadaniami w projektach. Umożliwia tworzenie, aktualiz
 
 ## Contributing
 
-Zapraszamy do współpracy! Jeśli masz pomysły, uwagi lub chciałbyś dodać nowe funkcje, otwórz zgłoszenie lub wyślij pull request.Q
+Zapraszamy do współpracy! Jeśli masz pomysły, uwagi lub chciałbyś dodać nowe funkcje, otwórz zgłoszenie lub wyślij pull request.
