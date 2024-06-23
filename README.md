@@ -10,12 +10,20 @@ Taskmanager to zaawansowany system do zarządzania zadaniami, który umożliwia 
 
 - **Autoryzacja**: Taskmanager zapewnia bezpieczny dostęp poprzez mechanizm logowania, co gwarantuje ochronę prywatności i bezpieczeństwo danych.
 
+![login](readme/images/login.png)
+
 ### Zadania i zlecenia
 
 - **Tworzenie zadań**: Użytkownicy mogą łatwo tworzyć nowe zadania i zlecenia, co umożliwia efektywne zarządzanie workflow i monitorowanie postępów prac.
+
+![add-task](readme/images/add-task.png)
+
 - **Przypisywanie zadań**: Zadania mogą być przypisane do konkretnych użytkowników, co pozwala na klarowne określenie odpowiedzialności.
 - **Dodawanie pasków postępu**: Użytkownicy mogą dodawać paski postępu do zadań, co umożliwia wizualne śledzenie stopnia realizacji zadań.
 - **Edytowanie zadań**: Zadania mogą być edytowane w celu aktualizacji szczegółów takich jak opis, termin, priorytet i przypisani użytkownicy.
+
+![edit-task-user](readme/images/edit-task-user.png)
+
 - **Usuwanie zadań**: Użytkownicy mogą usuwać zadania, które są już nieaktualne lub zakończone, co pomaga w utrzymaniu porządku w projektach.
 
 ### Planowanie pracy
@@ -26,14 +34,35 @@ Taskmanager to zaawansowany system do zarządzania zadaniami, który umożliwia 
 ### Zarządzanie projektami
 
 - **Tworzenie projektów**: Użytkownicy mogą tworzyć nowe projekty i przypisywać do nich zadania.
+
+![add-project](readme/images/add-project.png)
+
 - **Aktualizacja i usuwanie projektów**: Projekty mogą być aktualizowane i usuwane przez uprawnionych użytkowników.
 - **Śledzenie postępów projektów**: Umożliwia monitorowanie postępów prac w projektach i analizowanie efektywności zespołów.
+
+![projects](readme/images/projects.png)
 
 ### Zarządzanie użytkownikami
 
 - **Rejestracja i logowanie**: Nowi użytkownicy mogą się rejestrować, a istniejący logować do systemu.
 - **Profil użytkownika**: Użytkownicy mogą przeglądać i aktualizować swoje profile oraz zmieniać hasła.
+
+![profile](readme/images/profile.png)
+
 - **Role i uprawnienia**: System zarządza rolami użytkowników (admin, user) i przydziela odpowiednie uprawnienia, co zapewnia kontrolę dostępu do zasobów.
+
+## Instalacja
+
+```bash
+# Sklonuj repozytorium
+git clone https://github.com/Lefjuu/studia-management
+
+# Przejdź do katalogu projektu
+cd taskmanager
+
+# Uruchom aplikację
+dotnet build
+
 
 ## Instalacja
 
@@ -98,4 +127,4 @@ Odpowiada za zarządzanie zadaniami w projektach. Umożliwia tworzenie, aktualiz
 
 ## Contributing
 
-Zapraszamy do współpracy! Jeśli masz pomysły, uwagi lub chciałbyś dodać nowe funkcje, otwórz zgłoszenie lub wyślij pull request.
+Zapraszamy do współpracy! Jeśli masz pomysły, uwagi lub chciałbyś dodać nowe funkcje, otwórz zgłoszenie lub wyślij pull request.Q
