@@ -1,0 +1,10 @@
+@startuml
+interface IProjectService {
+    CreateProjectAsync(request:CreateProjectRequest) : Task<Project>
+    GetProjectByIdAsync(projectId:string) : Task<Project>
+    GetAllProjectsAsync() : Task<IEnumerable<Project>>
+    GetUsersAsync() : Task<IEnumerable<ApplicationUser>>
+    UpdateProjectAsync(id:string, request:UpdateProjectRequest) : Task<Project>
+    DeleteProjectAsync(id:string) : Task<bool>
+}
+@enduml

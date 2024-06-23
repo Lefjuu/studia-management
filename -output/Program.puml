@@ -1,0 +1,16 @@
+@startuml
+class "ConfigureMongoDbIdentity`3"<T1,T2,T3> {
+}
+class "AddUserManager`1"<T> {
+}
+class "AddRoleManager`1"<T> {
+}
+class "AddSignInManager`1"<T> {
+}
+class "AddIdentity`2"<T1,T2> {
+}
+class "AddSingleton`1"<T> {
+}
+class "AddScoped`2"<T1,T2> {
+}
+@enduml

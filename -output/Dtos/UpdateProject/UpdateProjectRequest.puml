@@ -1,0 +1,5 @@
+@startuml
+class UpdateProjectRequest {
+}
+ProjectBaseRequest <|-- UpdateProjectRequest
+@enduml

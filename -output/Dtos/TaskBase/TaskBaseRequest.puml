@@ -1,0 +1,9 @@
+@startuml
+class TaskBaseRequest {
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + Priority : int <<get>> <<set>>
+    + ProjectId : string <<get>> <<set>>
+    + UserId : string <<get>> <<set>>
+}
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+class AuthenticationController {
+    + AuthenticationController(authenticationService:IAuthenticationService)
+    + <<async>> Register(request:RegisterRequest) : Task<IActionResult>
+    + <<async>> Login(request:LoginRequest) : Task<IActionResult>
+    + <<async>> GetMyProfile(userId:string) : Task<IActionResult>
+    + <<async>> UpdateProfile(request:UpdateProfileRequest) : Task<IActionResult>
+    + <<async>> ChangePassword(request:ChangePasswordRequest) : Task<IActionResult>
+    + <<async>> GetUsers() : Task<IActionResult>
+}
+ControllerBase <|-- AuthenticationController
+AuthenticationController --> "_authenticationService" IAuthenticationService
+@enduml

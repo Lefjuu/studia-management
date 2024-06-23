@@ -1,0 +1,12 @@
+@startuml
+class TaskItem {
+    + Id : string <<get>> <<set>>
+    + Title : string <<get>> <<set>>
+    + Description : string <<get>> <<set>>
+    + Priority : int <<get>> <<set>>
+    + ProjectId : string <<get>> <<set>>
+    + UserId : string <<get>> <<set>>
+    + Progress : int <<get>> <<set>>
+}
+TaskItem --> "UpdatedAt" DateTime
+@enduml

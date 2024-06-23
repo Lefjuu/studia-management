@@ -1,0 +1,15 @@
+@startuml
+class ProjectController {
+    + ProjectController(projectService:IProjectService, taskService:ITaskService)
+    + <<async>> CreateProject(request:CreateProjectRequest) : Task<IActionResult>
+    + <<async>> GetProjectById(id:string) : Task<IActionResult>
+    + <<async>> GetAllProjects() : Task<IActionResult>
+    + <<async>> GetUsers() : Task<IActionResult>
+    + <<async>> UpdateProject(id:string, request:UpdateProjectRequest) : Task<IActionResult>
+    + <<async>> DeleteProject(id:string) : Task<IActionResult>
+    + <<async>> AddTaskToProject(projectId:string, request:CreateTaskRequest) : Task<IActionResult>
+}
+ControllerBase <|-- ProjectController
+ProjectController --> "_projectService" IProjectService
+ProjectController --> "_taskService" ITaskService
+@enduml

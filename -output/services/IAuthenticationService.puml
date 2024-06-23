@@ -1,0 +1,10 @@
+@startuml
+interface IAuthenticationService {
+    RegisterAsync(request:RegisterRequest) : Task<RegisterResponse>
+    LoginAsync(request:LoginRequest) : Task<LoginResponse>
+    GetMyProfileAsync(userId:string) : Task<UserProfileResponse>
+    UpdateProfileAsync(request:UpdateProfileRequest, userEmail:string) : Task<UpdateProfileResponse>
+    ChangePasswordAsync(request:ChangePasswordRequest, userId:string) : Task<ChangePasswordResponse>
+    GetUsersAsync() : Task<IEnumerable<ApplicationUser>>
+}
+@enduml

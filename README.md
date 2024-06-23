@@ -10,30 +10,87 @@ Taskmanager to zaawansowany system do zarządzania zadaniami, który umożliwia 
 
 - **Autoryzacja**: Taskmanager zapewnia bezpieczny dostęp poprzez mechanizm logowania, co gwarantuje ochronę prywatności i bezpieczeństwo danych.
 
+![login](readme/images/login.png)
+
 ### Zadania i zlecenia
 
 - **Tworzenie zadań**: Użytkownicy mogą łatwo tworzyć nowe zadania i zlecenia, co umożliwia efektywne zarządzanie workflow i monitorowanie postępów prac.
+
+![add-task](readme/images/add-task.png)
+
 - **Przypisywanie zadań**: Zadania mogą być przypisane do konkretnych użytkowników, co pozwala na klarowne określenie odpowiedzialności.
 - **Dodawanie pasków postępu**: Użytkownicy mogą dodawać paski postępu do zadań, co umożliwia wizualne śledzenie stopnia realizacji zadań.
 - **Edytowanie zadań**: Zadania mogą być edytowane w celu aktualizacji szczegółów takich jak opis, termin, priorytet i przypisani użytkownicy.
+
+![edit-task-user](readme/images/edit-task-user.png)
+
 - **Usuwanie zadań**: Użytkownicy mogą usuwać zadania, które są już nieaktualne lub zakończone, co pomaga w utrzymaniu porządku w projektach.
-
-### Planowanie pracy
-
-- **Współpraca**: System umożliwia dodawanie nowych pomysłów i dzielenie się nimi z innymi użytkownikami, co wspiera wspólną organizację i planowanie projektów.
-- **Harmonogramy i przypomnienia**: Użytkownicy mogą tworzyć harmonogramy zadań oraz ustawiać przypomnienia, co pomaga w terminowym wykonywaniu obowiązków.
 
 ### Zarządzanie projektami
 
-- **Tworzenie projektów**: Użytkownicy mogą tworzyć nowe projekty i przypisywać do nich zadania.
+- **Tworzenie projektów**: Admini mogą tworzyć nowe projekty i przypisywać do nich zadania.
+
+![add-project](readme/images/add-project.png)
+
 - **Aktualizacja i usuwanie projektów**: Projekty mogą być aktualizowane i usuwane przez uprawnionych użytkowników.
 - **Śledzenie postępów projektów**: Umożliwia monitorowanie postępów prac w projektach i analizowanie efektywności zespołów.
+
+![projects](readme/images/projects.png)
 
 ### Zarządzanie użytkownikami
 
 - **Rejestracja i logowanie**: Nowi użytkownicy mogą się rejestrować, a istniejący logować do systemu.
 - **Profil użytkownika**: Użytkownicy mogą przeglądać i aktualizować swoje profile oraz zmieniać hasła.
+
+![profile](readme/images/profile.png)
+
 - **Role i uprawnienia**: System zarządza rolami użytkowników (admin, user) i przydziela odpowiednie uprawnienia, co zapewnia kontrolę dostępu do zasobów.
+
+![register](readme/images/register.png)
+
+### Widok Administratora
+
+- **Dodawanie projektów**: Administratorzy mają możliwość dodawania nowych projektów.
+
+![add-project](readme/images/add-project.png)
+
+- **Edytowanie projektów**: Administratorzy mogą edytować szczegóły projektów.
+
+![edit-project-admin](readme/images/edit-project-admin.png)
+
+- **Przypisywanie zadań do projektów**: Administratorzy mogą przypisywać zadania do projektów.
+
+![project-admin](readme/images/project-admin.png)
+
+### Widok Użytkownika
+
+- **Edytowanie zadań**: Użytkownicy mogą edytować opis i postęp zadań, które zostały im przypisane.
+
+![edit-task-user](readme/images/edit-task-user.png)
+
+- **Podgląd projektów**: Użytkownicy mogą przeglądać projekty i zadania, które zostały im przypisane.
+
+![project-user](readme/images/project-user.png)
+
+### Diagram Aplikacji Taskmanager
+
+Poniżej znajduje się diagram przedstawiający strukturę i interfejs aplikacji Taskmanager. Diagram ten ilustruje główne komponenty systemu oraz interakcje między nimi, co pomaga w zrozumieniu przepływu pracy i funkcjonalności aplikacji.
+
+![diagram](out/-output/include/include.svg)
+
+
+## Instalacja
+
+```bash
+# Sklonuj repozytorium
+git clone https://github.com/Lefjuu/studia-management
+
+# Przejdź do katalogu projektu
+cd taskmanager
+
+# Uruchom aplikację
+dotnet build
+
 
 ## Instalacja
 

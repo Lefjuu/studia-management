@@ -1,0 +1,6 @@
+@startuml
+class RegisterResponse {
+    + Message : string <<get>> <<set>>
+    + Success : bool <<get>> <<set>>
+}
+@enduml

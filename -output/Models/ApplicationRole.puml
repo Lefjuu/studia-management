@@ -1,0 +1,7 @@
+@startuml
+class ApplicationRole {
+}
+class "MongoIdentityRole`1"<T> {
+}
+"MongoIdentityRole`1" "<Guid>" <|-- ApplicationRole
+@enduml

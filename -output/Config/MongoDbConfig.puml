@@ -1,0 +1,6 @@
+@startuml
+class MongoDbConfig {
+    + DatabaseName : string <<get>> <<init>>
+    + ConnectionString : string <<get>> <<init>>
+}
+@enduml

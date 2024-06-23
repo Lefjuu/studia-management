@@ -1,0 +1,5 @@
+@startuml
+class CreateTaskRequest {
+}
+TaskBaseRequest <|-- CreateTaskRequest
+@enduml
